@@ -1,0 +1,75 @@
+package com.jdottori.example.glofox.service;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+import java.time.LocalDate;
+
+import com.jdottori.example.glofox.model.DuplicateClassException;
+import com.jdottori.example.glofox.model.GlofoxClass;
+import com.jdottori.example.glofox.model.dto.GlofoxClassDto;
+import com.jdottori.example.glofox.repository.ClassRepository;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+@ExtendWith(SpringExtension.class)
+@SpringBootTest
+public class ClassServiceTest {
+
+    @Autowired
+    ClassRepository classRepository;
+
+    @Autowired
+    ClassService classService;
+
+
+
+    @Test
+	public void shouldCreateClass() {
+        final String name = "Test class name";
+        final LocalDate date = LocalDate.of(2020, 2, 2);
+        final int capacity = 10;
+        GlofoxClassDto classDto = new GlofoxClassDto();
+        classDto.setName(name);
+        classDto.setStartDate(date);
+        classDto.setEndDate(date);
+        classDto.setCapacity(capacity);
+
+        classService.createClass(classDto);
+
+		Assertions.assertNotEquals(classDto.getId(), -1l);
+    }
+    
+    @Test
+    public void shouldReturnCreatedClass() {
+        GlofoxClass c = new GlofoxClass();
+        final String name = "Test class name";
+        final LocalDate date = LocalDate.of(2020, 2, 2);
+        final int capacity = 10;
+        c.setName(name);
+        c.setCapacity(capacity);
+        c.setStartDate(date);
+        c.setEndDate(date);
+        classRepository.save(c);
+
+        GlofoxClassDto classDto = classService.getClass(c.getId()).get();
+
+        Assertions.assertNotNull(classDto, "Class shouldn't be null");
+        Assertions.assertEquals(classDto.getName(), name);
+		Assertions.assertEquals(classDto.getStartDate(), date);
+        Assertions.assertEquals(classDto.getEndDate(), date);
+		Assertions.assertEquals(classDto.getCapacity(), capacity);
+    }
+    
+    @Test
+	public void shouldReturnNullForNotExistingClass() {
+		GlofoxClassDto classDto = classService.getClass(123l).orElse(null);
+
+		Assertions.assertNull(classDto);
+	}
+
+
+}
