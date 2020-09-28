@@ -117,7 +117,6 @@ public class ClassServiceTest {
             //Arrange
             final String name = "Same name";
             final LocalDate date = LocalDate.of(2020, 2, 2);
-            final int capacity = 10;
             
             //Act
             GlofoxClassDto classDto = new GlofoxClassDto();
