@@ -9,6 +9,7 @@ import java.time.LocalDate;
 
 import com.jdottori.example.glofox.model.DuplicateClassException;
 import com.jdottori.example.glofox.model.GlofoxClass;
+import com.jdottori.example.glofox.model.InvalidClassException;
 import com.jdottori.example.glofox.model.dto.GlofoxClassDto;
 import com.jdottori.example.glofox.repository.ClassRepository;
 
@@ -72,6 +73,59 @@ public class ClassServiceTest {
 
             classService.createClass(classDto);
             
+        });
+    }
+    
+    @Test
+	public void shouldFailWithNullName() {
+        Assertions.assertThrows(InvalidClassException.class, () -> {
+
+            //Arrange
+            final LocalDate date = LocalDate.of(2020, 2, 2);
+            final int capacity = 10;
+            
+            //Act
+            GlofoxClassDto classDto = new GlofoxClassDto();
+            classDto.setStartDate(date);
+            classDto.setEndDate(date);
+            classDto.setCapacity(capacity);
+            classService.createClass(classDto);
+        });
+    }
+
+    @Test
+	public void shouldFailWithNullDate() {
+        Assertions.assertThrows(InvalidClassException.class, () -> {
+
+            //Arrange
+            final String name = "Same name";
+            final int capacity = 10;
+            
+            //Act
+            GlofoxClassDto classDto = new GlofoxClassDto();
+            classDto.setName(name);
+            classDto.setCapacity(capacity);
+            classService.createClass(classDto);
+        });
+    }
+
+
+    @Test
+	public void shouldFailWithNonPositiveCapacity() {
+        Assertions.assertThrows(InvalidClassException.class, () -> {
+
+            //Arrange
+            final String name = "Same name";
+            final LocalDate date = LocalDate.of(2020, 2, 2);
+            final int capacity = 10;
+            
+            //Act
+            GlofoxClassDto classDto = new GlofoxClassDto();
+            classDto.setName(name);
+            classDto.setStartDate(date);
+            classDto.setEndDate(date);
+            classDto.setCapacity(0);
+            classService.createClass(classDto);
         });
     }
     
